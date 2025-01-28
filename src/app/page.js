@@ -12,7 +12,7 @@ export default function Page() {
       <form className={styles.form} onSubmit={handleSubmit}>
         <h1 className={styles.formHeading}>Sign Up</h1>
         <div className={styles.formGroup}>
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email" className='visually-hidden'>Email</label>
           <input
             type="email"
             id="email"
@@ -22,7 +22,7 @@ export default function Page() {
           />
         </div>
         <div className={styles.formGroup}>
-          <label htmlFor="password">Password</label>
+          <label htmlFor="password" className='visually-hidden'>Password</label>
           <input
             type="password"
             id="password"
