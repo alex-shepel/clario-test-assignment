@@ -6,10 +6,22 @@ import { ShowPassword } from '@/icons/ShowPassword';
 
 export const Form = () => {
   const [showsPassword, setShowsPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const togglePassword = useCallback(() => {
     setShowsPassword(s => !s);
   },[])
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    validatePassword(newPassword); // Real-time validation
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -26,6 +38,8 @@ export const Form = () => {
           id="email"
           name="email"
           placeholder="Email"
+          value={email}
+          onChange={handleEmailChange}
           required
         />
       </div>
@@ -36,6 +50,8 @@ export const Form = () => {
           id="password"
           name="password"
           placeholder="Create a password"
+          value={password}
+          onChange={handlePasswordChange}
           required
         />
         <button type='button' className={styles.hidePassword} onClick={togglePassword}>
