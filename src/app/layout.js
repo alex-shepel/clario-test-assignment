@@ -1,3 +1,4 @@
+import './reset.css';
 import styles from './layout.module.css';
 
 export const metadata = {
