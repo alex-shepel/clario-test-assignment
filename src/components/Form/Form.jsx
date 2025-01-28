@@ -1,77 +1,14 @@
 import { HidePassword } from '@/icons/HidePassword';
 import { Button } from '@/components/Button/Button';
 import styles from '@/components/Form/Form.module.css';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ShowPassword } from '@/icons/ShowPassword';
-
-const EMAIL_TESTS_DATA_MAP = new Map();
-
-EMAIL_TESTS_DATA_MAP.set('regex', {
-  message: 'Invalid email address',
-  test: (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
-});
-
-const PASSWORD_TESTS_DATA_MAP = new Map();
-
-PASSWORD_TESTS_DATA_MAP.set('spaces', {
-  message: 'No spaces',
-  test: (password) => !/\s/.test(password),
-});
-PASSWORD_TESTS_DATA_MAP.set('minLength', {
-  message: '8 characters or more',
-  test: (password) => password.length >= 8,
-});
-PASSWORD_TESTS_DATA_MAP.set('maxLength', {
-  message: '64 characters or less',
-  test: (password) => password.length <= 64,
-});
-PASSWORD_TESTS_DATA_MAP.set('cases', {
-  message: 'Uppercase and lowercase letters',
-  test: (password) => /[A-Z]/.test(password) && /[a-z]/.test(password),
-});
-PASSWORD_TESTS_DATA_MAP.set('digits', {
-  message: 'At least one digit',
-  test: (password) => /\d/.test(password),
-});
-
-const initFormFieldStateMap = (formFieldDataMap) => {
-  const formFieldStateMap = new Map();
-
-  formFieldDataMap.forEach((_, key) => {
-    formFieldStateMap.set(key, {
-      passed: false,
-      dirty: false
-    });
-  });
-
-  return formFieldStateMap;
-}
-
-const validateFormField = (formFieldDataMap, password) => {
-  const formFieldStateMap = new Map();
-
-  formFieldDataMap.forEach((_, key) => {
-    formFieldStateMap.set(key, {
-      dirty: true,
-      passed: formFieldDataMap.get(key).test(password),
-    });
-  })
-
-  return formFieldStateMap;
-}
-
-const areAllTestsPassed = testsStateMap => Array.from(testsStateMap.entries())
-  .every(([, value]) => value.passed);
-
-const copyMap = (map) => {
-  const newMap = new Map();
-
-  map.forEach((value, key) => {
-    newMap.set(key, { ...value });
-  })
-
-  return newMap;
-};
+import {
+  EMAIL_TESTS_DATA_MAP,
+  PASSWORD_TESTS_DATA_MAP,
+} from '@/components/Form/Form.constants';
+import { useFieldValidation } from '@/hooks/useFieldValidation';
+import { areAllTestsPassed } from '@/helpers/areAllTestsPassed';
 
 export const Form = () => {
   const [email, setEmail] = useState('');
@@ -79,19 +16,19 @@ export const Form = () => {
 
   const [showsPassword, setShowsPassword] = useState(false);
 
-  const emailTestsStateMapRef = useRef(
-    initFormFieldStateMap(EMAIL_TESTS_DATA_MAP)
-  );
-  const [emailTestsStateMap, setEmailTestsStateMap] = useState(
-    () => copyMap(emailTestsStateMapRef.current),
-  );
+  const {
+    stateDraft: emailValidationStateDraft,
+    state: emailValidationState,
+    applyDraft: applyEmailValidationStateDraft,
+    validate: validateEmail,
+  } = useFieldValidation(EMAIL_TESTS_DATA_MAP);
 
-  const passwordTestsStateMapRef = useRef(
-    initFormFieldStateMap(PASSWORD_TESTS_DATA_MAP)
-  )
-  const [passwordTestsStateMap, setPasswordTestsStateMap] = useState(
-    () => copyMap(passwordTestsStateMapRef.current),
-  );
+  const {
+    stateDraft: passwordValidationStateDraft,
+    state: passwordValidationState,
+    applyDraft: applyPasswordValidationStateDraft,
+    validate: validatePassword,
+  } = useFieldValidation(PASSWORD_TESTS_DATA_MAP);
 
   const togglePassword = useCallback(() => {
     setShowsPassword((s) => !s);
@@ -102,14 +39,11 @@ export const Form = () => {
 
     setEmail(email);
 
-    emailTestsStateMapRef.current = validateFormField(
-      EMAIL_TESTS_DATA_MAP,
-      email,
-    );
+    emailValidationStateDraft.current = validateEmail(email);
   };
 
   const handlerEmailBlur = () => {
-    setEmailTestsStateMap(copyMap(emailTestsStateMapRef.current));
+    applyEmailValidationStateDraft();
   }
 
   const handlePasswordChange = (e) => {
@@ -117,19 +51,19 @@ export const Form = () => {
 
     setPassword(password);
 
-    passwordTestsStateMapRef.current = validateFormField(
-      PASSWORD_TESTS_DATA_MAP,
-      password,
-    );
+    passwordValidationStateDraft.current = validatePassword(password);
 
-    setPasswordTestsStateMap(copyMap(passwordTestsStateMapRef.current));
+    applyPasswordValidationStateDraft();
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const isEmailValid = areAllTestsPassed(emailTestsStateMapRef.current);
-    const isPasswordValid = areAllTestsPassed(passwordTestsStateMapRef.current);
+    applyEmailValidationStateDraft();
+    applyPasswordValidationStateDraft();
+
+    const isEmailValid = areAllTestsPassed(emailValidationStateDraft.current);
+    const isPasswordValid = areAllTestsPassed(passwordValidationStateDraft.current);
 
     if (isEmailValid && isPasswordValid) {
       console.log('Form submitted!');
@@ -158,14 +92,9 @@ export const Form = () => {
           required
         />
 
-        {Array.from(emailTestsStateMap.entries()).map(([key, value]) => (
-          value.dirty && (
-            <p
-              key={key}
-              className={value.passed
-                ? styles.formTestPassed
-                : styles.formTestFailed}
-            >
+        {Array.from(emailValidationState.entries()).map(([key, value]) => (
+          value.dirty && !value.passed && (
+            <p key={key} className={styles.formTestFailed}>
               {EMAIL_TESTS_DATA_MAP.get(key).message}
             </p>
           )
@@ -195,7 +124,7 @@ export const Form = () => {
           {showsPassword ? <ShowPassword /> : <HidePassword />}
         </button>
 
-        {Array.from(passwordTestsStateMap.entries()).map(([key, value]) => (
+        {Array.from(passwordValidationState.entries()).map(([key, value]) => (
           value.dirty && (
             <p
               key={key}
