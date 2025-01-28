@@ -1,0 +1,44 @@
+.form {
+    width: 100%;
+    text-align: center;
+}
+
+.formHeading {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.formGroup:last-of-type {
+    margin-bottom: 40px;
+}
+
+.formGroup > input {
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: 10px;
+    background-color: var(--accent-background-color);;
+    border: none;
+}
+
+.formGroup > .hidePassword {
+    height: 24px;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    color: var(--secondary-color);
+}
+
+.formSubmit {
+    width: 240px;
+    height: 48px;
+    padding: 15px 32px;
+    border-radius: 30px;
+    background: linear-gradient(110.46deg, #70C3FF 12.27%, #4B65FF 93.92%);
+    color: var(--accent-color);
+}
