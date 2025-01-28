@@ -1,5 +1,6 @@
 'use client';
 import styles from './page.module.css';
+import { HidePassword } from '@/icons/HidePassword';
 
 export default function Page() {
   const handleSubmit = (e) => {
@@ -20,6 +21,9 @@ export default function Page() {
             placeholder="Email"
             required
           />
+          <div className={styles.hidePassword}>
+            <HidePassword />
+          </div>
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="password" className='visually-hidden'>Password</label>
@@ -30,6 +34,9 @@ export default function Page() {
             placeholder="Create a password"
             required
           />
+          <div className={styles.hidePassword}>
+            <HidePassword/>
+          </div>
         </div>
         <button type="submit" className={styles.formSubmit}>
           Sign Up

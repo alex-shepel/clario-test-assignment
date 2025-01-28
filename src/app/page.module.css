@@ -18,6 +18,7 @@
 
 .formGroup {
     margin-bottom: 20px;
+    position: relative;
 }
 
 .formGroup:last-of-type {
@@ -30,6 +31,15 @@
     border-radius: 10px;
     background-color: var(--accent-background-color);;
     border: none;
+}
+
+.formGroup > .hidePassword {
+    height: 24px;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    color: var(--secondary-color);
 }
 
 .formSubmit {
