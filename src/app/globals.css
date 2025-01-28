@@ -1,5 +1,9 @@
 :root {
   --primary-color: #4a4e71;
+  --secondary-color: #6f91bc;
+  --accent-color: #fff;
+
+  --accent-background-color: #fff;
 }
 
 .visually-hidden {
