@@ -1,5 +1,6 @@
 import { Inter } from 'next/font/google';
 import './reset.css';
+import './globals.css';
 import styles from './layout.module.css';
 
 const inter = Inter({

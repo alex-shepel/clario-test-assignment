@@ -10,6 +10,7 @@ export default function Page() {
   return (
     <main className={styles.wrapper}>
       <form className={styles.form} onSubmit={handleSubmit}>
+        <h1 className={styles.formHeading}>Sign Up</h1>
         <div className={styles.formGroup}>
           <label htmlFor="email">Email</label>
           <input
