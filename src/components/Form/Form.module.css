@@ -25,13 +25,20 @@
     border: none;
 }
 
-.formGroup > .hidePassword {
+.formShowHidePassword {
     height: 24px;
     position: absolute;
-    top: 50%;
+    top: 12px;
     right: 20px;
-    transform: translateY(-50%);
     color: var(--secondary-color);
+}
+
+.formTestPassed {
+    color: var(--success-color);
+}
+
+.formTestFailed {
+    color: var(--fail-color);
 }
 
 .formSubmit {
