@@ -4,7 +4,9 @@
   --accent-color: #fff;
 
   --success-color: #27b274;
+  --success-secondary-color: #fff;
   --fail-color: #ff8080;
+  --fail-secondary-color: #fdefee;
 
   --accent-background-color: #fff;
 }

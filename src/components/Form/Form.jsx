@@ -89,13 +89,18 @@ export const Form = () => {
           value={email}
           onChange={handleEmailChange}
           onBlur={handlerEmailBlur}
+          className={
+            emailValidator.current.areAllPassed(emailValidationState)
+              ? styles.valid
+              : styles.invalid
+          }
           required
         />
 
         <div className={styles.formValidation}>
           {Array.from(emailValidationState.entries()).map(([key, value]) => (
             value.dirty && !value.passed && (
-              <p key={key} className={styles.formTestFailed}>
+              <p key={key} className={styles.invalid}>
                 {EMAIL_TESTS.get(key).message}
               </p>
             )
@@ -115,6 +120,11 @@ export const Form = () => {
           placeholder="Create a password"
           value={password}
           onChange={handlePasswordChange}
+          className={
+            passwordValidator.current.areAllPassed(passwordValidationState)
+              ? styles.valid
+              : styles.invalid
+          }
           required
         />
 
@@ -131,9 +141,7 @@ export const Form = () => {
             value.dirty && (
               <p
                 key={key}
-                className={value.passed
-                  ? styles.formTestPassed
-                  : styles.formTestFailed}
+                className={value.passed ? styles.valid : styles.invalid}
               >
                 {PASSWORD_TESTS.get(key).message}
               </p>
