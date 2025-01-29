@@ -18,7 +18,7 @@ export class FieldValidator {
     return state;
   }
 
-  validate(value) {
+  getUpdatedState(value) {
     const state = new Map();
 
     this.tests.forEach(({ test }, key) => {

@@ -5,13 +5,13 @@ export const useDraftableState = (initialState) => {
 
   const [state, setState] = useState(initialState);
 
-  const applyDraft = useCallback(() => {
+  const saveDraft = useCallback(() => {
     setState(stateDraft.current);
   }, []);
 
   return {
     state,
     stateDraft,
-    applyDraft,
+    saveDraft,
   }
 }

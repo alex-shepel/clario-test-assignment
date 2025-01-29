@@ -19,14 +19,13 @@ export const Form = () => {
   const {
     state: emailValidationState,
     stateDraft: emailValidationDraft,
-    applyDraft: applyEmailValidationDraft,
+    saveDraft: saveEmailValidationDraft,
   } = useDraftableState(emailValidator.current.getInitialState());
 
-  const {
-    state: passwordValidationState,
-    stateDraft: passwordValidationDraft,
-    applyDraft: applyPasswordValidationDraft,
-  } = useDraftableState(passwordValidator.current.getInitialState());
+  const [
+    passwordValidationState,
+    setPasswordValidationState,
+  ] = useState(passwordValidator.current.getInitialState());
 
   const togglePassword = useCallback(() => {
     setShowsPassword((s) => !s);
@@ -37,11 +36,13 @@ export const Form = () => {
 
     setEmail(email);
 
-    emailValidationDraft.current = emailValidator.current.validate(email);
+    emailValidationDraft.current = (
+      emailValidator.current.getUpdatedState(email)
+    );
   };
 
   const handlerEmailBlur = () => {
-    applyEmailValidationDraft();
+    saveEmailValidationDraft();
   }
 
   const handlePasswordChange = (e) => {
@@ -49,22 +50,19 @@ export const Form = () => {
 
     setPassword(password);
 
-    passwordValidationDraft.current = passwordValidator.current.validate(password);
-
-    applyPasswordValidationDraft();
+    setPasswordValidationState(
+      passwordValidator.current.getUpdatedState(password)
+    );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    applyEmailValidationDraft();
-    applyPasswordValidationDraft();
-
     const isEmailValid = emailValidator.current.areAllPassed(
       emailValidationDraft.current
     );
     const isPasswordValid = passwordValidator.current.areAllPassed(
-      passwordValidationDraft.current
+      passwordValidationState
     );
 
     if (isEmailValid && isPasswordValid) {
