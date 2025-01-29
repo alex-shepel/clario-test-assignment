@@ -1,14 +1,11 @@
 import { HidePassword } from '@/icons/HidePassword';
 import { Button } from '@/components/Button/Button';
 import styles from '@/components/Form/Form.module.css';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { ShowPassword } from '@/icons/ShowPassword';
-import {
-  EMAIL_TESTS_DATA_MAP,
-  PASSWORD_TESTS_DATA_MAP,
-} from '@/components/Form/Form.constants';
-import { useFieldValidation } from '@/hooks/useFieldValidation';
-import { areAllTestsPassed } from '@/helpers/areAllTestsPassed';
+import { EMAIL_TESTS, PASSWORD_TESTS } from '@/components/Form/Form.constants';
+import { FieldValidator } from '@/helpers/FieldValidator';
+import { useDraftableState } from '@/hooks/useDraftableState';
 
 export const Form = () => {
   const [email, setEmail] = useState('');
@@ -16,19 +13,20 @@ export const Form = () => {
 
   const [showsPassword, setShowsPassword] = useState(false);
 
-  const {
-    stateDraft: emailValidationStateDraft,
-    state: emailValidationState,
-    applyDraft: applyEmailValidationStateDraft,
-    validate: validateEmail,
-  } = useFieldValidation(EMAIL_TESTS_DATA_MAP);
+  const emailValidator = useRef(new FieldValidator(EMAIL_TESTS));
+  const passwordValidator = useRef(new FieldValidator(PASSWORD_TESTS));
 
   const {
-    stateDraft: passwordValidationStateDraft,
+    state: emailValidationState,
+    stateDraft: emailValidationDraft,
+    applyDraft: applyEmailValidationDraft,
+  } = useDraftableState(emailValidator.current.getInitialState());
+
+  const {
     state: passwordValidationState,
-    applyDraft: applyPasswordValidationStateDraft,
-    validate: validatePassword,
-  } = useFieldValidation(PASSWORD_TESTS_DATA_MAP);
+    stateDraft: passwordValidationDraft,
+    applyDraft: applyPasswordValidationDraft,
+  } = useDraftableState(passwordValidator.current.getInitialState());
 
   const togglePassword = useCallback(() => {
     setShowsPassword((s) => !s);
@@ -39,11 +37,11 @@ export const Form = () => {
 
     setEmail(email);
 
-    emailValidationStateDraft.current = validateEmail(email);
+    emailValidationDraft.current = emailValidator.current.validate(email);
   };
 
   const handlerEmailBlur = () => {
-    applyEmailValidationStateDraft();
+    applyEmailValidationDraft();
   }
 
   const handlePasswordChange = (e) => {
@@ -51,19 +49,23 @@ export const Form = () => {
 
     setPassword(password);
 
-    passwordValidationStateDraft.current = validatePassword(password);
+    passwordValidationDraft.current = passwordValidator.current.validate(password);
 
-    applyPasswordValidationStateDraft();
+    applyPasswordValidationDraft();
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    applyEmailValidationStateDraft();
-    applyPasswordValidationStateDraft();
+    applyEmailValidationDraft();
+    applyPasswordValidationDraft();
 
-    const isEmailValid = areAllTestsPassed(emailValidationStateDraft.current);
-    const isPasswordValid = areAllTestsPassed(passwordValidationStateDraft.current);
+    const isEmailValid = emailValidator.current.areAllPassed(
+      emailValidationDraft.current
+    );
+    const isPasswordValid = passwordValidator.current.areAllPassed(
+      passwordValidationDraft.current
+    );
 
     if (isEmailValid && isPasswordValid) {
       console.log('Form submitted!');
@@ -95,7 +97,7 @@ export const Form = () => {
         {Array.from(emailValidationState.entries()).map(([key, value]) => (
           value.dirty && !value.passed && (
             <p key={key} className={styles.formTestFailed}>
-              {EMAIL_TESTS_DATA_MAP.get(key).message}
+              {EMAIL_TESTS.get(key).message}
             </p>
           )
         ))}
@@ -132,7 +134,7 @@ export const Form = () => {
                 ? styles.formTestPassed
                 : styles.formTestFailed}
             >
-              {PASSWORD_TESTS_DATA_MAP.get(key).message}
+              {PASSWORD_TESTS.get(key).message}
             </p>
           )
         ))}
