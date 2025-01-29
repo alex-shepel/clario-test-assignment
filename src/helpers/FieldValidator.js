@@ -1,9 +1,3 @@
-const copyState = (state) => {
-  return new Map(
-    [...state.entries()].map(([key, value]) => ([key, { ...value }]))
-  );
-}
-
 export class FieldValidator {
   _state;
 
