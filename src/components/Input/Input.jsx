@@ -1,7 +1,8 @@
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { ShowPassword } from '@/icons/ShowPassword';
 import { HidePassword } from '@/icons/HidePassword';
 import styles from '@/components/Input/Input.module.css';
+import { areAllTestcasesPassed } from '@/helpers/areAllTestcasesPassed';
 
 export const Input = memo( ({
   name,
@@ -10,13 +11,15 @@ export const Input = memo( ({
   placeholder,
   onChange,
   onBlur,
-  valid = false,
   late = false,
-  testsStatus,
-  testsData,
+  tests,
 }) => {
   const [dirty, setDirty] = useState(false);
   const [showsValue, setShowsValue] = useState(true);
+
+  const valid = useMemo(() => {
+    return areAllTestcasesPassed(tests);
+  }, [tests]);
 
   const toggleShowsValue = useCallback(() => {
     setShowsValue((s) => !s);
@@ -81,9 +84,8 @@ export const Input = memo( ({
     </button>
 
     {dirty && <div className={styles.validation}>
-      {Array.from(testsData.entries()).map(([key, { message }]) => {
-        const passed = testsStatus.get(key);
-        const shown = late || !passed;
+      {Array.from(tests.entries()).map(([key, { message, passed }]) => {
+        const shown = !late || !passed;
 
         return shown && (
           <p key={key} className={passed ? styles.valid : styles.invalid}>

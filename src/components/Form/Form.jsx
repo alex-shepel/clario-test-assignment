@@ -3,55 +3,50 @@ import styles from '@/components/Form/Form.module.css';
 import { useCallback, useRef, useState } from 'react';
 import { EMAIL_TESTS, PASSWORD_TESTS } from '@/components/Form/Form.constants';
 import { FieldValidator } from '@/helpers/FieldValidator';
-import { useDraftableState } from '@/hooks/useDraftableState';
 import { Input } from '@/components/Input/Input';
+import { areAllTestcasesPassed } from '@/helpers/areAllTestcasesPassed';
 
 export const Form = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // handles validation, uses non-reactive variables
   const emailValidator = useRef(new FieldValidator(EMAIL_TESTS));
   const passwordValidator = useRef(new FieldValidator(PASSWORD_TESTS));
 
-  const {
-    state: emailValidationState,
-    stateDraft: emailValidationDraft,
-    saveDraft: saveEmailValidationDraft,
-  } = useDraftableState(emailValidator.current.getInitialState());
-
+  // handles errors rendering, uses reactive variables
+  const [
+    emailValidationState,
+    setEmailValidationState
+  ]= useState(() => emailValidator.current.state);
   const [
     passwordValidationState,
     setPasswordValidationState,
-  ] = useState(passwordValidator.current.getInitialState());
+  ] = useState(() => passwordValidator.current.state);
 
   const handleEmailChange = useCallback((email) => {
     setEmail(email);
-
-    emailValidationDraft.current = (
-      emailValidator.current.getUpdatedState(email)
-    );
-  }, []);
+    emailValidator.current.update(email);
+  }, [emailValidator]);
 
   const handlerEmailBlur = useCallback(() => {
-    saveEmailValidationDraft();
-  }, [saveEmailValidationDraft])
+    setEmailValidationState(emailValidator.current.state);
+  }, [emailValidator])
 
   const handlePasswordChange = useCallback((password) => {
     setPassword(password);
-
-    setPasswordValidationState(
-      passwordValidator.current.getUpdatedState(password)
-    );
+    passwordValidator.current.update(password);
+    setPasswordValidationState(passwordValidator.current.state);
   }, []);
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
 
-    const isEmailValid = emailValidator.current.areAllPassed(
-      emailValidationDraft.current
+    const isEmailValid = areAllTestcasesPassed(
+      emailValidator.current.state
     );
-    const isPasswordValid = passwordValidator.current.areAllPassed(
-      passwordValidationState
+    const isPasswordValid = areAllTestcasesPassed(
+      passwordValidator.current.state
     );
 
     if (isEmailValid && isPasswordValid) {
@@ -70,13 +65,11 @@ export const Form = () => {
           name="email"
           type="email"
           placeholder="Email"
+          late
           value={email}
           onChange={handleEmailChange}
           onBlur={handlerEmailBlur}
-          late
-          valid={emailValidator.current.areAllPassed(emailValidationState)}
-          testsState={emailValidationState}
-          testsData={EMAIL_TESTS}
+          tests={emailValidationState}
         />
       </div>
 
@@ -87,9 +80,7 @@ export const Form = () => {
           placeholder="Create a password"
           value={password}
           onChange={handlePasswordChange}
-          valid={passwordValidator.current.areAllPassed(passwordValidationState)}
-          testsState={passwordValidationState}
-          testsData={PASSWORD_TESTS}
+          tests={passwordValidationState}
         />
       </div>
 

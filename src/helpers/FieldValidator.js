@@ -1,31 +1,33 @@
+const copyState = (state) => {
+  return new Map(
+    [...state.entries()].map(([key, value]) => ([key, { ...value }]))
+  );
+}
+
 export class FieldValidator {
-  tests;
+  _state;
 
   constructor(tests) {
-    this.tests = tests;
+    const entries = [...tests.entries()];
+
+    this._state = new Map(
+      entries.map(([key, value]) => ([key, {
+        ...value,
+        passed: false,
+      }]))
+    );
   }
 
-  getInitialState() {
-    const state = new Map();
-
-    this.tests.keys().forEach(key => {
-      state.set(key, false);
-    });
-
-    return state;
-  }
-
-  getUpdatedState(value) {
-    const state = new Map();
-
-    this.tests.forEach(({ test }, key) => {
-      state.set(key, test(value));
+  update(value) {
+    this._state.forEach((testcase) => {
+      testcase.passed = testcase.test(value);
     })
-
-    return state;
   }
 
-  areAllPassed(state) {
-    return Array.from(state.values()).includes(false);
+  get state() {
+    return new Map(
+      [...this._state.entries()]
+        .map(([key, value]) => ([key, { ...value }]))
+    );
   }
 }
