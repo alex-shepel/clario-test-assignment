@@ -1,10 +1,10 @@
-import { useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { ShowPassword } from '@/icons/ShowPassword';
 import { HidePassword } from '@/icons/HidePassword';
 import { PASSWORD_TESTS } from '@/components/Form/Form.constants';
 import styles from '@/components/Input/Input.module.css';
 
-export const Input = ({
+export const Input = memo( ({
   name,
   value,
   placeholder,
@@ -22,22 +22,22 @@ export const Input = ({
     setShowsValue((s) => !s);
   }, []);
 
-  const actualType = useMemo(() => {
+  const getType = () => {
     switch (type) {
       case 'password':
         return showsValue ? 'text' : 'password';
       default:
         return type;
     }
-  }, [type])
+  };
 
-  const className = useMemo(() => {
+  const getClassName = () => {
     if (!dirty) {
       return undefined;
     }
 
     return isValid ? styles.valid : styles.invalid;
-  }, [])
+  };
 
   const handleChange = useCallback((e) => {
     onChange(e);
@@ -61,14 +61,14 @@ export const Input = ({
     </label>
 
     <input
-      type={actualType}
+      type={getType()}
       id={name}
       name={name}
       placeholder={placeholder}
       value={value}
       onChange={handleChange}
       onBlur={handleBlur}
-      className={className}
+      className={getClassName()}
       required
     />
 
@@ -93,4 +93,4 @@ export const Input = ({
       ))}
     </div>
   </div>
-}
+});
