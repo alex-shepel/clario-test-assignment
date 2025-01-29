@@ -1,7 +1,7 @@
 import { Button } from '@/components/Button/Button';
 import styles from '@/components/Form/Form.module.css';
 import { useCallback, useRef, useState } from 'react';
-import { EMAIL_TESTS, PASSWORD_TESTS } from '@/components/Form/Form.constants';
+import { EMAIL_TESTS, PASSWORD_TESTS } from '@/components/Form/Form.tests';
 import { FieldValidator } from '@/helpers/FieldValidator';
 import { Input } from '@/components/Input/Input';
 import { areAllTestcasesPassed } from '@/helpers/areAllTestcasesPassed';
