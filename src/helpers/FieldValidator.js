@@ -9,10 +9,7 @@ export class FieldValidator {
     const state = new Map();
 
     this.tests.keys().forEach(key => {
-      state.set(key, {
-        passed: false,
-        dirty: false
-      });
+      state.set(key, false);
     });
 
     return state;
@@ -22,24 +19,13 @@ export class FieldValidator {
     const state = new Map();
 
     this.tests.forEach(({ test }, key) => {
-      state.set(key, {
-        dirty: true,
-        passed: test(value),
-      });
+      state.set(key, test(value));
     })
 
     return state;
   }
 
-  isDirty(state) {
-    const values = Array.from(state.values());
-
-    return values.some(value => value.dirty)
-  }
-
   areAllPassed(state) {
-    const values = Array.from(state.values());
-
-    return values.every(value => !value.dirty || value.passed)
+    return Array.from(state.values()).includes(false);
   }
 }

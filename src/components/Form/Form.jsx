@@ -24,9 +24,7 @@ export const Form = () => {
     setPasswordValidationState,
   ] = useState(passwordValidator.current.getInitialState());
 
-  const handleEmailChange = useCallback((e) => {
-    const email = e.target.value;
-
+  const handleEmailChange = useCallback((email) => {
     setEmail(email);
 
     emailValidationDraft.current = (
@@ -38,9 +36,7 @@ export const Form = () => {
     saveEmailValidationDraft();
   }, [saveEmailValidationDraft])
 
-  const handlePasswordChange = useCallback((e) => {
-    const password = e.target.value;
-
+  const handlePasswordChange = useCallback((password) => {
     setPassword(password);
 
     setPasswordValidationState(
@@ -69,27 +65,33 @@ export const Form = () => {
     <form className={styles.form} onSubmit={handleSubmit}>
       <h1 className={styles.formHeading}>Sign Up</h1>
 
-      <Input
-        name="email"
-        placeholder="Email"
-        value={email}
-        onChange={handleEmailChange}
-        onBlur={handlerEmailBlur}
-        type="email"
-        isLate
-        isValid={emailValidator.current.areAllPassed(emailValidationState)}
-        tests={emailValidationState}
-      />
+      <div className={styles.formInput}>
+        <Input
+          name="email"
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={handleEmailChange}
+          onBlur={handlerEmailBlur}
+          late
+          valid={emailValidator.current.areAllPassed(emailValidationState)}
+          testsState={emailValidationState}
+          testsData={EMAIL_TESTS}
+        />
+      </div>
 
-      <Input
-        name="password"
-        placeholder="Create a password"
-        value={password}
-        onChange={handlePasswordChange}
-        type="password"
-        isValid={passwordValidator.current.areAllPassed(passwordValidationState)}
-        tests={passwordValidationState}
-      />
+      <div className={styles.formInput}>
+        <Input
+          name="password"
+          type="password"
+          placeholder="Create a password"
+          value={password}
+          onChange={handlePasswordChange}
+          valid={passwordValidator.current.areAllPassed(passwordValidationState)}
+          testsState={passwordValidationState}
+          testsData={PASSWORD_TESTS}
+        />
+      </div>
 
       <div className={styles.formSubmit}>
         <Button type="submit">Sign Up</Button>

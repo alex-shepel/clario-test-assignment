@@ -1,19 +1,19 @@
 import { memo, useCallback, useState } from 'react';
 import { ShowPassword } from '@/icons/ShowPassword';
 import { HidePassword } from '@/icons/HidePassword';
-import { PASSWORD_TESTS } from '@/components/Form/Form.constants';
 import styles from '@/components/Input/Input.module.css';
 
 export const Input = memo( ({
   name,
   value,
+  type = 'text',
   placeholder,
-  type,
   onChange,
   onBlur,
-  isValid,
-  tests,
-  isLate,
+  valid = false,
+  late = false,
+  testsStatus,
+  testsData,
 }) => {
   const [dirty, setDirty] = useState(false);
   const [showsValue, setShowsValue] = useState(true);
@@ -36,26 +36,26 @@ export const Input = memo( ({
       return undefined;
     }
 
-    return isValid ? styles.valid : styles.invalid;
+    return valid ? styles.valid : styles.invalid;
   };
 
   const handleChange = useCallback((e) => {
-    onChange(e);
+    onChange?.(e.target.value);
 
-    if (!isLate) {
+    if (!late) {
       setDirty(true);
     }
   }, [])
 
   const handleBlur = useCallback((e) => {
-    onBlur(e);
+    onBlur?.(e.target.value);
 
-    if (isLate) {
+    if (late) {
       setDirty(true);
     }
   }, [])
 
-  return <div className={styles.formGroup}>
+  return <div className={styles.wrapper}>
     <label htmlFor={name} className="visually-hidden">
       {name}
     </label>
@@ -74,23 +74,23 @@ export const Input = memo( ({
 
     <button
       type="button"
-      className={styles.formShowHidePassword}
+      className={styles.showHideButton}
       onClick={toggleShowsValue}
     >
       {showsValue ? <ShowPassword /> : <HidePassword />}
     </button>
 
-    <div className={styles.formValidation}>
-      {Array.from(tests.entries()).map(([key, value]) => (
-        value.dirty && (isLate || !value.passed) && (
-          <p
-            key={key}
-            className={value.passed ? styles.valid : styles.invalid}
-          >
-            {PASSWORD_TESTS.get(key).message}
+    {dirty && <div className={styles.validation}>
+      {Array.from(testsData.entries()).map(([key, { message }]) => {
+        const passed = testsStatus.get(key);
+        const shown = late || !passed;
+
+        return shown && (
+          <p key={key} className={passed ? styles.valid : styles.invalid}>
+            {message}
           </p>
-        )
-      ))}
-    </div>
+        );
+      })}
+    </div>}
   </div>
 });

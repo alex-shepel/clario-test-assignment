@@ -1,4 +1,8 @@
-.formGroup > input {
+.wrapper {
+    position: relative;
+}
+
+.wrapper > input {
     width: 100%;
     padding: 14px 20px;
     border-radius: 10px;
@@ -6,33 +10,33 @@
     border: none;
 }
 
-.formGroup > input.valid {
+.wrapper > input.valid {
     color: var(--success-color);
     border: 1px solid var(--success-color);
     background-color: var(--success-secondary-color);
 }
 
-.formGroup > input.invalid {
+.wrapper > input.invalid {
     color: var(--fail-color);
     border: 1px solid var(--fail-color);
     background-color: var(--fail-secondary-color);
 }
 
-.formValidation {
+.validation {
     margin-top: 8px;
     text-align: start;
     padding-inline: 20px;
 }
 
-.formValidation > .valid {
+.validation > .valid {
     color: var(--success-color);
 }
 
-.formValidation > .invalid {
+.validation > .invalid {
     color: var(--fail-color);
 }
 
-.formShowHidePassword {
+.showHideButton {
     height: 24px;
     position: absolute;
     top: 12px;
