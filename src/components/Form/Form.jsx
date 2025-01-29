@@ -1,6 +1,6 @@
 import { Button } from '@/components/Button/Button';
 import styles from '@/components/Form/Form.module.css';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { EMAIL_TESTS, PASSWORD_TESTS } from '@/components/Form/Form.constants';
 import { FieldValidator } from '@/helpers/FieldValidator';
 import { useDraftableState } from '@/hooks/useDraftableState';
@@ -24,7 +24,7 @@ export const Form = () => {
     setPasswordValidationState,
   ] = useState(passwordValidator.current.getInitialState());
 
-  const handleEmailChange = (e) => {
+  const handleEmailChange = useCallback((e) => {
     const email = e.target.value;
 
     setEmail(email);
@@ -32,13 +32,13 @@ export const Form = () => {
     emailValidationDraft.current = (
       emailValidator.current.getUpdatedState(email)
     );
-  };
+  }, []);
 
-  const handlerEmailBlur = () => {
+  const handlerEmailBlur = useCallback(() => {
     saveEmailValidationDraft();
-  }
+  }, [saveEmailValidationDraft])
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = useCallback((e) => {
     const password = e.target.value;
 
     setPassword(password);
@@ -46,9 +46,9 @@ export const Form = () => {
     setPasswordValidationState(
       passwordValidator.current.getUpdatedState(password)
     );
-  };
+  }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
 
     const isEmailValid = emailValidator.current.areAllPassed(
@@ -63,7 +63,7 @@ export const Form = () => {
     } else {
       console.log('Form has errors.');
     }
-  };
+  }, []);
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
