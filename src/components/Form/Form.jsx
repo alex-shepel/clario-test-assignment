@@ -1,17 +1,14 @@
-import { HidePassword } from '@/icons/HidePassword';
 import { Button } from '@/components/Button/Button';
 import styles from '@/components/Form/Form.module.css';
-import { useCallback, useRef, useState } from 'react';
-import { ShowPassword } from '@/icons/ShowPassword';
+import { useRef, useState } from 'react';
 import { EMAIL_TESTS, PASSWORD_TESTS } from '@/components/Form/Form.constants';
 import { FieldValidator } from '@/helpers/FieldValidator';
 import { useDraftableState } from '@/hooks/useDraftableState';
+import { Input } from '@/components/Input/Input';
 
 export const Form = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const [showsPassword, setShowsPassword] = useState(false);
 
   const emailValidator = useRef(new FieldValidator(EMAIL_TESTS));
   const passwordValidator = useRef(new FieldValidator(PASSWORD_TESTS));
@@ -26,10 +23,6 @@ export const Form = () => {
     passwordValidationState,
     setPasswordValidationState,
   ] = useState(passwordValidator.current.getInitialState());
-
-  const togglePassword = useCallback(() => {
-    setShowsPassword((s) => !s);
-  }, []);
 
   const handleEmailChange = (e) => {
     const email = e.target.value;
@@ -76,79 +69,27 @@ export const Form = () => {
     <form className={styles.form} onSubmit={handleSubmit}>
       <h1 className={styles.formHeading}>Sign Up</h1>
 
-      <div className={styles.formGroup}>
-        <label htmlFor="email" className="visually-hidden">
-          Email
-        </label>
+      <Input
+        name="email"
+        placeholder="Email"
+        value={email}
+        onChange={handleEmailChange}
+        onBlur={handlerEmailBlur}
+        type="email"
+        isLate
+        isValid={emailValidator.current.areAllPassed(emailValidationState)}
+        tests={emailValidationState}
+      />
 
-        <input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="Email"
-          value={email}
-          onChange={handleEmailChange}
-          onBlur={handlerEmailBlur}
-          className={
-            emailValidator.current.areAllPassed(emailValidationState)
-              ? styles.valid
-              : styles.invalid
-          }
-          required
-        />
-
-        <div className={styles.formValidation}>
-          {Array.from(emailValidationState.entries()).map(([key, value]) => (
-            value.dirty && !value.passed && (
-              <p key={key} className={styles.invalid}>
-                {EMAIL_TESTS.get(key).message}
-              </p>
-            )
-          ))}
-        </div>
-      </div>
-
-      <div className={styles.formGroup}>
-        <label htmlFor="password" className="visually-hidden">
-          Password
-        </label>
-
-        <input
-          type={showsPassword ? 'text' : 'password'}
-          id="password"
-          name="password"
-          placeholder="Create a password"
-          value={password}
-          onChange={handlePasswordChange}
-          className={
-            passwordValidator.current.areAllPassed(passwordValidationState)
-              ? styles.valid
-              : styles.invalid
-          }
-          required
-        />
-
-        <button
-          type="button"
-          className={styles.formShowHidePassword}
-          onClick={togglePassword}
-        >
-          {showsPassword ? <ShowPassword /> : <HidePassword />}
-        </button>
-
-        <div className={styles.formValidation}>
-          {Array.from(passwordValidationState.entries()).map(([key, value]) => (
-            value.dirty && (
-              <p
-                key={key}
-                className={value.passed ? styles.valid : styles.invalid}
-              >
-                {PASSWORD_TESTS.get(key).message}
-              </p>
-            )
-          ))}
-        </div>
-      </div>
+      <Input
+        name="password"
+        placeholder="Create a password"
+        value={password}
+        onChange={handlePasswordChange}
+        type="password"
+        isValid={passwordValidator.current.areAllPassed(passwordValidationState)}
+        tests={passwordValidationState}
+      />
 
       <div className={styles.formSubmit}>
         <Button type="submit">Sign Up</Button>

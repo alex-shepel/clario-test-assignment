@@ -31,9 +31,15 @@ export class FieldValidator {
     return state;
   }
 
+  isDirty(state) {
+    const values = Array.from(state.values());
+
+    return values.some(value => value.dirty)
+  }
+
   areAllPassed(state) {
     const values = Array.from(state.values());
 
-    return values.every(value => value.passed)
+    return values.every(value => !value.dirty || value.passed)
   }
 }

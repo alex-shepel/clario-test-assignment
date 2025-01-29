@@ -1,0 +1,41 @@
+.formGroup > input {
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: 10px;
+    background-color: var(--accent-background-color);;
+    border: none;
+}
+
+.formGroup > input.valid {
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+    background-color: var(--success-secondary-color);
+}
+
+.formGroup > input.invalid {
+    color: var(--fail-color);
+    border: 1px solid var(--fail-color);
+    background-color: var(--fail-secondary-color);
+}
+
+.formValidation {
+    margin-top: 8px;
+    text-align: start;
+    padding-inline: 20px;
+}
+
+.formValidation > .valid {
+    color: var(--success-color);
+}
+
+.formValidation > .invalid {
+    color: var(--fail-color);
+}
+
+.formShowHidePassword {
+    height: 24px;
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    color: var(--secondary-color);
+}
