@@ -92,13 +92,15 @@ export const Form = () => {
           required
         />
 
-        {Array.from(emailValidationState.entries()).map(([key, value]) => (
-          value.dirty && !value.passed && (
-            <p key={key} className={styles.formTestFailed}>
-              {EMAIL_TESTS.get(key).message}
-            </p>
-          )
-        ))}
+        <div className={styles.formValidation}>
+          {Array.from(emailValidationState.entries()).map(([key, value]) => (
+            value.dirty && !value.passed && (
+              <p key={key} className={styles.formTestFailed}>
+                {EMAIL_TESTS.get(key).message}
+              </p>
+            )
+          ))}
+        </div>
       </div>
 
       <div className={styles.formGroup}>
@@ -124,23 +126,25 @@ export const Form = () => {
           {showsPassword ? <ShowPassword /> : <HidePassword />}
         </button>
 
-        {Array.from(passwordValidationState.entries()).map(([key, value]) => (
-          value.dirty && (
-            <p
-              key={key}
-              className={value.passed
-                ? styles.formTestPassed
-                : styles.formTestFailed}
-            >
-              {PASSWORD_TESTS.get(key).message}
-            </p>
-          )
-        ))}
+        <div className={styles.formValidation}>
+          {Array.from(passwordValidationState.entries()).map(([key, value]) => (
+            value.dirty && (
+              <p
+                key={key}
+                className={value.passed
+                  ? styles.formTestPassed
+                  : styles.formTestFailed}
+              >
+                {PASSWORD_TESTS.get(key).message}
+              </p>
+            )
+          ))}
+        </div>
       </div>
 
-      <Button type="submit" className={styles.formSubmit}>
-        Sign Up
-      </Button>
+      <div className={styles.formSubmit}>
+        <Button type="submit">Sign Up</Button>
+      </div>
     </form>
   );
 };
