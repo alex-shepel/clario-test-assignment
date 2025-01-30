@@ -15,7 +15,7 @@ export const Input = memo( ({
   tests,
 }) => {
   const [dirty, setDirty] = useState(false);
-  const [showsValue, setShowsValue] = useState(true);
+  const [showsValue, setShowsValue] = useState(false);
 
   const valid = useMemo(() => {
     return areAllTestcasesPassed(tests);
@@ -75,13 +75,13 @@ export const Input = memo( ({
       required
     />
 
-    <button
+    {type === 'password' && <button
       type="button"
       className={styles.showHideButton}
       onClick={toggleShowsValue}
     >
-      {showsValue ? <ShowPassword /> : <HidePassword />}
-    </button>
+      {showsValue ? <ShowPassword/> : <HidePassword/>}
+    </button>}
 
     {dirty && <div className={styles.validation}>
       {Array.from(tests.entries()).map(([key, { message, passed }]) => {
